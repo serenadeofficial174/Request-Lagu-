@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sawer & Request Lagu</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+  color: #222;
+}
+
+.container {
+  max-width: 450px;
+  margin: auto;
+  padding: 25px 18px;
+  text-align: center;
+}
+
+.card {
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+h1 {
+  margin-top: 0;
+}
+
+.qris {
+  width: 220px;
+  height: 220px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #eee;
+  margin: 15px auto;
+}
+
+.nominal {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.nominal button {
+  padding: 13px;
+  border: 2px solid #ddd;
+  background: white;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.nominal button.active {
+  background: #111;
+  color: white;
+  border-color: #111;
+}
+
+input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px;
+  margin: 8px 0;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+.whatsapp {
+  width: 100%;
+  padding: 15px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 12px;
+  background: #25D366;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.note {
+  font-size: 13px;
+  color: #777;
+  margin-top: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <div class="card">
+
+    <h1>🎵 Sawer & Request Lagu</h1>
+
+    <p>Silakan pilih nominal saweran terlebih dahulu.</p>
+
+    <img class="qris" src="qris.png" alt="QRIS">
+
+    <div class="nominal">
+      <button onclick="pilihNominal(10000, this)">Rp10.000</button>
+      <button onclick="pilihNominal(20000, this)">Rp20.000</button>
+      <button onclick="pilihNominal(50000, this)">Rp50.000</button>
+      <button onclick="pilihNominal(100000, this)">Rp100.000</button>
+    </div>
+
+    <input type="text" id="nama" placeholder="Nama yang request">
+
+    <input type="text" id="lagu" placeholder="Judul lagu">
+
+    <button class="whatsapp" onclick="kirimWhatsApp()">
+      📲 Kirim Request ke WhatsApp
+    </button>
+
+    <div class="note">
+      Setelah melakukan saweran, kirim request lagu melalui WhatsApp.
+    </div>
+
+  </div>
+</div>
+
+<script>
+
+let nominal = 0;
+
+function pilihNominal(jumlah, tombol) {
+  nominal = jumlah;
+
+  document.querySelectorAll(".nominal button")
+    .forEach(btn => btn.classList.remove("active"));
+
+  tombol.classList.add("active");
+}
+
+function kirimWhatsApp() {
+
+  const nama = document.getElementById("nama").value.trim();
+  const lagu = document.getElementById("lagu").value.trim();
+
+  if (nominal === 0) {
+    alert("Silakan pilih nominal saweran terlebih dahulu.");
+    return;
+  }
+
+  if (nama === "") {
+    alert("Silakan isi nama.");
+    return;
+  }
+
+  if (lagu === "") {
+    alert("Silakan isi judul lagu.");
+    return;
+  }
+
+  const pesan =
+`🎵 REQUEST LAGU
+
+Nama: ${nama}
+Judul Lagu: ${lagu}
+Nominal Saweran: Rp${nominal.toLocaleString("id-ID")}
+
+Saya sudah melakukan saweran.`;
+
+  const nomor = "6285122961465";
+
+  const url =
+    "https://wa.me/" + nomor + "?text=" + encodeURIComponent(pesan);
+
+  window.open(url, "_blank");
+}
+
+</script>
+
+</body>
+  </html>
