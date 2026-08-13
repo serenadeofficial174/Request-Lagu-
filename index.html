@@ -62,6 +62,24 @@ h1 {
   border-color: #111;
 }
 
+.confirm {
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 12px;
+  background: #111;
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.confirm:disabled {
+  background: #bbb;
+  cursor: not-allowed;
+}
+
 input {
   width: 100%;
   box-sizing: border-box;
@@ -70,6 +88,10 @@ input {
   border: 1px solid #ddd;
   border-radius: 10px;
   font-size: 15px;
+}
+
+#formRequest {
+  display: none;
 }
 
 .whatsapp {
@@ -90,6 +112,16 @@ input {
   color: #777;
   margin-top: 15px;
 }
+
+.status {
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: 10px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-size: 14px;
+  display: none;
+}
 </style>
 </head>
 
@@ -100,9 +132,11 @@ input {
 
     <h1>🎵 Sawer & Request Lagu</h1>
 
-    <p>Silakan pilih nominal saweran terlebih dahulu.</p>
+    <p>Pilih nominal saweran terlebih dahulu.</p>
 
-    <img class="qris" src="IMG_20260812_020258.png" alt="QRIS">
+    <img class="qris"
+         src="IMG_20260812_020258.png"
+         alt="QRIS">
 
     <div class="nominal">
       <button onclick="pilihNominal(10000, this)">Rp10.000</button>
@@ -111,16 +145,37 @@ input {
       <button onclick="pilihNominal(100000, this)">Rp100.000</button>
     </div>
 
-    <input type="text" id="nama" placeholder="Nama yang request">
-
-    <input type="text" id="lagu" placeholder="Judul lagu">
-
-    <button class="whatsapp" onclick="kirimWhatsApp()">
-      📲 Kirim Request ke WhatsApp
+    <button id="tombolSawer"
+            class="confirm"
+            onclick="konfirmasiSawer()"
+            disabled>
+      💰 Saya Sudah Sawer
     </button>
 
+    <div id="status" class="status">
+      ✅ Saweran dikonfirmasi. Silakan isi request lagu.
+    </div>
+
+    <div id="formRequest">
+
+      <input type="text"
+             id="nama"
+             placeholder="Nama yang request">
+
+      <input type="text"
+             id="lagu"
+             placeholder="Judul lagu">
+
+      <button class="whatsapp"
+              onclick="kirimWhatsApp()">
+        📲 Kirim Request ke WhatsApp
+      </button>
+
+    </div>
+
     <div class="note">
-      Setelah melakukan saweran, kirim request lagu melalui WhatsApp.
+      Pilih nominal, lakukan pembayaran melalui QRIS,
+      lalu tekan "Saya Sudah Sawer".
     </div>
 
   </div>
@@ -129,25 +184,53 @@ input {
 <script>
 
 let nominal = 0;
+let sudahSawer = false;
 
 function pilihNominal(jumlah, tombol) {
+
   nominal = jumlah;
+  sudahSawer = false;
 
   document.querySelectorAll(".nominal button")
     .forEach(btn => btn.classList.remove("active"));
 
   tombol.classList.add("active");
+
+  document.getElementById("tombolSawer").disabled = false;
+
+  document.getElementById("formRequest").style.display = "none";
+
+  document.getElementById("status").style.display = "none";
 }
 
-function kirimWhatsApp() {
-
-  const nama = document.getElementById("nama").value.trim();
-  const lagu = document.getElementById("lagu").value.trim();
+function konfirmasiSawer() {
 
   if (nominal === 0) {
     alert("Silakan pilih nominal saweran terlebih dahulu.");
     return;
   }
+
+  sudahSawer = true;
+
+  document.getElementById("formRequest").style.display = "block";
+
+  document.getElementById("status").style.display = "block";
+
+  document.getElementById("tombolSawer").disabled = true;
+}
+
+function kirimWhatsApp() {
+
+  if (!sudahSawer) {
+    alert("Silakan lakukan saweran terlebih dahulu.");
+    return;
+  }
+
+  const nama =
+    document.getElementById("nama").value.trim();
+
+  const lagu =
+    document.getElementById("lagu").value.trim();
 
   if (nama === "") {
     alert("Silakan isi nama.");
@@ -166,12 +249,15 @@ Nama: ${nama}
 Judul Lagu: ${lagu}
 Nominal Saweran: Rp${nominal.toLocaleString("id-ID")}
 
-Saya sudah melakukan saweran.`;
+Saya sudah melakukan saweran melalui QRIS.`;
 
   const nomor = "6285122961465";
 
   const url =
-    "https://wa.me/" + nomor + "?text=" + encodeURIComponent(pesan);
+    "https://wa.me/" +
+    nomor +
+    "?text=" +
+    encodeURIComponent(pesan);
 
   window.open(url, "_blank");
 }
